@@ -1,8 +1,32 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
-
+import Head from "next/head";
+import Image from "next/image";
+import styles from "../styles/Home.module.css";
+import QRCode from "qrcode";
+import { useState } from "react";
 export default function Home() {
+  const [qrcode, setQrCode] = useState("");
+  const [link, setLink] = useState("");
+  const [size, setSize] = useState("");
+  const handleSelect = (e) => {
+    setSize(e.target.value);
+  };
+  const getQRCode = (e) => {
+    e.preventDefault();
+    QRCode.toDataURL(
+      link,
+      {
+        width: size,
+        heigt: size,
+        margin: 2,
+      },
+      (err, url) => {
+        if (err) return console.error(err);
+        console.log(url);
+        setQrCode(url);
+      }
+    );
+  };
+
   return (
     <div className={styles.container}>
       <Head>
@@ -12,58 +36,35 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className={styles.card}
-          >
-            <h2>Examples &rarr;</h2>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h2>Deploy &rarr;</h2>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
+        <select onChange={handleSelect}>
+          <option value="100">100x100</option>
+          <option value="200">200x200</option>
+          <option value="300">300x300</option>
+          <option value="400">400x400</option>
+          <option value="500">500x500</option>
+          <option value="600">600x600</option>
+          <option value="700">700x700</option>
+          <option value="800">800x800</option>
+          <option value="900">900x900</option>
+        </select>
+        <form className={styles.form}>
+          <div className={styles.inputwrapper}>
+            <input
+              value={link}
+              onChange={(evt) => setLink(evt.target.value)}
+              placeholder="Link"
+              className={styles.formInput}
+            />
+            <label className={styles.formLabel}>Link</label>
+          </div>
+          <button onClick={getQRCode}>Generate</button>
+        </form>
+        {qrcode && (
+          <>
+            <img src={qrcode} />
+          </>
+        )}{" "}
       </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
-      </footer>
     </div>
-  )
+  );
 }
